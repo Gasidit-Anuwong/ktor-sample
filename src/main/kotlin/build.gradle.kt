@@ -1,25 +1,32 @@
-package com.example
+val kotlin_version: String by project
+val logback_version: String by project
 
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
-
-fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        module()
-    }.start(wait = true)
+plugins {
+    kotlin("jvm") version "2.1.10"
+    id("io.ktor.plugin") version "3.2.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23" // Must match Kotlin version
 }
 
-fun Application.module() {
-    install(ContentNegotiation) {
-        json(Json {
-            prettyPrint = true
-            isLenient = true
-        })
-    }
+group = "com.role"
+version = "0.0.1"
 
-    routing {
-        taskRoutes()
-    }
+application {
+    mainClass = "io.ktor.server.netty.EngineMain"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.ktor:ktor-server-core-jvm")
+    implementation("io.ktor:ktor-server-netty")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("io.ktor:ktor-server-core")
+    implementation("io.ktor:ktor-server-config-yaml")
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 }
